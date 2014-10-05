@@ -26,7 +26,7 @@ const (
 type Conn struct {
 	CtlId  uint32
 	UnitId uint32
-	fd     int
+	Fd     int
 }
 
 type Message interface {
@@ -34,15 +34,15 @@ type Message interface {
 }
 
 func (conn *Conn) socket() (int, error) {
-	if conn.fd == 0 {
+	if conn.Fd == 0 {
 		fd, err := syscall.Socket(PF_SYSTEM, syscall.SOCK_DGRAM, SYSPROTO_CONTROL)
 		if err != nil {
 			return 0, err
 		}
-		conn.fd = fd
+		conn.Fd = fd
 	}
 
-	return conn.fd, nil
+	return conn.Fd, nil
 }
 
 // Connect will create a connection to the control socket for the
@@ -59,10 +59,10 @@ func (conn *Conn) Connect() error {
 
 // Close closes a connection to a kernel extension
 func (conn *Conn) Close() {
-	if conn.fd != 0 {
-		syscall.Close(conn.fd)
+	if conn.Fd != 0 {
+		syscall.Close(conn.Fd)
 	}
-	conn.fd = 0
+	conn.Fd = 0
 }
 
 func (conn *Conn) SendCommand(msg Message) {
